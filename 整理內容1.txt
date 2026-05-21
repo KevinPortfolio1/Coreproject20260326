@@ -1,0 +1,26 @@
+# ⚡ Cyber Cat Agent (機械貓特工核心)
+
+一個基於 Qt (C++)與 Ollama 局部大語言模型的賽博朋克風系統狀態監控與 RSS 新聞流解碼終端
+本系統整合了即時數據攔截、情緒分析矩陣以及動態骨骼渲染技術
+
+---
+
+## 🛠️ 核心技術棧 (Core Stack)
+前端渲染引擎: Qt Widgets / QPainter 2D 霓虹矩陣渲染
+異步網路管線: QNetworkAccessManager (RSS 脈衝動態獲取)
+邊緣端 AI 驅動: Ollama API 整合 (32~64 Token 隨機動態流控制)
+架構設計: 狀態與渲染完全分離 (Data-Driven UI), 具備歷史極限耗時分析
+
+## 📐 系統模組架構
+CoreState: 核心相容性狀態機，掌管當前情緒狀態 (`SASS`, `ANGRY`, `SAD`, `ANALYZING`)。
+CyberPalette: 靜態霓虹基本色矩陣，內建 Lubuntu 專屬加粗字型優化。
+MoodAnalyzer: 黑牆級 NLP 數據流清洗與情緒熔煉分析器。
+HudRenderer&CatRenderer: 模組化繪製管線，降低繪圖主線程負擔。
+
+## 🚀 快速開始 (Getting Started)
+
+### 前置需求 (Prerequisites)
+1.  Qt 6 (需內建 QtWidgets 與 QtNetwork 模組)
+2. Ollama已在本地運行，且部署好對應的模型 (預設監聽 localhost:11434)
+3. 支援的字型：Noto Sans CJK TC`與 Monospace
+
