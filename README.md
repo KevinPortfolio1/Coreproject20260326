@@ -25,6 +25,14 @@ CatRenderer (機械貓外觀渲染器)：使用 `QPainter` 進行純數學幾何
 
 ---
 
+## 🚀 執行環境與編譯指南
+
+### 前提條件
+作業系統：Linux (建議 Lubuntu 輕量級環境) 或 Windows / macOS
+編譯器：支援 C++17 或以上之編譯器 (GCC / Clang / MSVC)
+框架：Qt 5.12+ 或 Qt 6.x (需內含 `Network` 與 `Widgets` 模組)
+本地 AI 後端：需在背景執行 `Ollama` 並部署對應之大語言模型
+
 ## 🔄 核心數據流向圖 (Data Pipeline)
 ```mermaid
 graph TD
@@ -46,11 +54,5 @@ graph TD
     style Ollama fill:#221133,stroke:#ff007f,stroke-width:2px;
     style Paint fill:#112211,stroke:#33cc33,stroke-width:2px;  
 
-## 🚀 執行環境與編譯指南
 
-### 前提條件
-作業系統：Linux (建議 Lubuntu 輕量級環境) 或 Windows / macOS
-編譯器：支援 C++17 或以上之編譯器 (GCC / Clang / MSVC)
-框架：Qt 5.12+ 或 Qt 6.x (需內含 `Network` 與 `Widgets` 模組)
-本地 AI 後端：需在背景執行 `Ollama` 並部署對應之大語言模型
 
