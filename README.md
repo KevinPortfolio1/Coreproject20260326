@@ -10,18 +10,18 @@
 本專案嚴格遵循狀態與渲染分離的設計原則，所有視覺渲染器皆為無狀態（Stateless）的靜態類別，藉此達成高內聚、低耦合的硬體架構。
 
 ### 1. 核心狀態與樣式 (Model)
-CoreState(核心狀態矩陣)：全域執行期狀態機，控管解碼進度（`decodeProgress`）、動態物理步進（`bodyBounce`）、當前情緒（`Mood`）及歷史解碼耗時。
-CyberPalette(霓虹調色盤)：定義專案專屬的賽博色彩矩陣（霓虹青、螢光粉、矩陣綠、警示黃），並預載入適用於 Lubuntu 系統環境的粗體字型與發光畫筆（QPen）。
+CoreState(核心狀態矩陣)：全域執行期狀態機，控管解碼進度（`decodeProgress`）、動態物理步進（`bodyBounce`）、當前情緒（`Mood`）及歷史解碼耗時。  
+CyberPalette(霓虹調色盤)：定義專案專屬的賽博色彩矩陣（霓虹青、螢光粉、矩陣綠、警示黃），並預載入適用於 Lubuntu 系統環境的粗體字型與發光畫筆（QPen）。  
 
 ### 2. 網路與 AI 動態流水線 (Controller)
-RssFetcher(新聞攔截器)：利用 `QNetworkAccessManager` 非同步抓取網路新聞，自動建立去重歷史佇列（`MAX_HISTORY_SIZE = 50`），防止重複數據流入。
-OllamaClient(AI 轉譯核心)：對接本地大模型。內部實作動態 Prompt 工程，並動態調控 `num_predict`（32~64 Token），確保貓咪吐槽精簡毒舌。
-CyberFormatter(文本清洗器)：過濾 AI 響應中殘留的 `<think>` 思考標籤、Markdown 語法及雜訊，抽離純淨文本。
-MoodAnalyzer(情緒語意分析器)：輕量級 NLP 引擎。透過關鍵字權衡機制，即時將文本映射至 `SASS`（吐槽）、`ANGRY`（暴怒）、`SAD`（無聊想睡）與 `ANALYZING`（數據攔截）四種核心情緒。
+RssFetcher(新聞攔截器)：利用 `QNetworkAccessManager` 非同步抓取網路新聞，自動建立去重歷史佇列（`MAX_HISTORY_SIZE = 50`），防止重複數據流入。  
+OllamaClient(AI 轉譯核心)：對接本地大模型。內部實作動態 Prompt 工程，並動態調控 `num_predict`（32~64 Token），確保貓咪吐槽精簡毒舌。  
+CyberFormatter(文本清洗器)：過濾 AI 響應中殘留的 `<think>` 思考標籤、Markdown 語法及雜訊，抽離純淨文本。  
+MoodAnalyzer(情緒語意分析器)：輕量級 NLP 引擎。透過關鍵字權衡機制，即時將文本映射至 `SASS`（吐槽）、`ANGRY`（暴怒）、`SAD`（無聊想睡）與 `ANALYZING`（數據攔截）四種核心情緒。  
 
 ### 3. 全像視覺渲染層 (View)
-HudRenderer (全像 HUD 渲染器)：負責頂部系統狀態欄、中間 RSS 數據方格矩陣、歷史極限耗時（Min/Max/Last）以及右側對話氣泡與解碼進度條的純代碼繪製。
-CatRenderer (機械貓外觀渲染器)：使用 `QPainter` 進行純數學幾何向量繪製。將貓體分解為外殼、內耳、霓虹眼、動態鬍鬚與賽博面具，並完美耦合 `bodyBounce` 物理步進。
+HudRenderer (全像 HUD 渲染器)：負責頂部系統狀態欄、中間 RSS 數據方格矩陣、歷史極限耗時（Min/Max/Last）以及右側對話氣泡與解碼進度條的純代碼繪製。  
+CatRenderer (機械貓外觀渲染器)：使用 `QPainter` 進行純數學幾何向量繪製。將貓體分解為外殼、內耳、霓虹眼、動態鬍鬚與賽博面具，並完美耦合 `bodyBounce` 物理步進。  
 
 ---
 
