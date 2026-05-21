@@ -27,35 +27,12 @@ CatRenderer (機械貓外觀渲染器)：使用 `QPainter` 進行純數學幾何
 
 ## 🔄 核心數據流向圖 (Data Pipeline)
 =========================================【 CYBER_DATA_PIPELINE 】=========================================
-[ 主時脈核心 ] ──( 15秒定時脈衝 )──► [ RssFetcher 新聞攔截器 ]
-                                                │ ( QNetworkReply 非同步 XML )
-                                                │
-                                                ▼  [ 數據重映射字典 ]
-       [ newsReady(QString) 訊號 ]               │   ( 賽博字詞替換 )
-                   │                            ▼
-                   ▼                     ┌──────────────┐
-          [ CyberFormatter ] ◄──( 文本清洗 ) ◄── │  MainWindow  │ ──( 攔截數據啟動計時 )
-                                         └──────────────┘           │
-                                                ▼                   │
-                                         [ MoodAnalyzer ]           │
-                                                │ ( 非同步 POST 封包 )│
-                                                │                   ▼ ( 四大情緒權衡 )
-                                                ▼            [ OllamaClient ] ──( 算力調配 32~64 Tokens )
-                                         [ responseArrival(QString) 訊號 ]  │ ( Mood 映射變更)
-                                                │                           ▼
-                                                └─────────────────► [ 狀態機變更 ] ◄───┘
-                                                                            │ ( update() 觸發重繪 )
-                                                                            │
-                                                                            ▼
-                                                                 ┌──────────────────────┐
-                                                                 │  MainWindow::paint   │
-                                                                 └──────────────────────┘
-                                                                   /                  \
-                                        ( 傳遞全域狀態 CoreState ) /                    \ ( 傳遞全域狀態 CoreState )
-                                                                 /                      \
-                                                                ▼                        ▼
-                                                         [ HudRenderer ]          [ CatRenderer ]
-                                                       ( 終端矩陣、極限耗時 )     ( 正弦波骨骼、掃描眼 )
+A[主時脈核心] -->|15秒定時脈衝| B(RssFetcher 新聞攔截器)
+    B -->|非同步 XML| C[MainWindow]
+    C -->|文本清洗| D[CyberFormatter]
+    D --> E[MoodAnalyzer]
+    E -->|非同步 POST| F[OllamaClient]
+    F -->|狀態機變更| G[MainWindow::paint]
 ===========================================================================================================
 
 ## 🚀 執行環境與編譯指南
