@@ -28,28 +28,24 @@ CatRenderer (機械貓外觀渲染器)：使用 `QPainter` 進行純數學幾何
 ## 🔄 核心數據流向圖 (Data Pipeline)
 ```mermaid
 graph TD
-    %% 定義節點與流程
     Clock[主時脈核心] -->|15秒定時脈衝| Fetcher[RssFetcher 新聞攔截器]
-    Fetcher -->|QNetworkReply 非同步 XML| MW[MainWindow]
+    Fetcher -->|"QNetworkReply 非同步 XML"| MW[MainWindow]
     
-    %% 核心處理循環
     MW -->|攔截數據啟動計時| Formatter[CyberFormatter 文本清洗]
     Dict[數據重映射字典] -.->|賽博字詞替換| Formatter
-    Formatter -->|newsReady 訊號| Analyzer[MoodAnalyzer 四大情緒權衡]
+    Formatter -->|"newsReady 訊號"| Analyzer[MoodAnalyzer 四大情緒權衡]
     
-    %% AI 算力調配
-    Analyzer -->|非同步 POST 封包| Ollama[OllamaClient 算力調配 32~64 Tokens]
-    Ollama -->|Mood 映射變更 / responseArrival 訊號| SM[狀態機變更]
+    Analyzer -->|"非同步 POST 封包"| Ollama["OllamaClient (算力調配 32-64 Tokens)"]
+    Ollama -->|"Mood 映射變更 / responseArrival 訊號"| SM[狀態機變更]
     
-    %% 渲染輸出
-    SM -->|update 觸發重繪| Paint[MainWindow::paint]
-    Paint --> Hud[HudRenderer 終端矩陣、極限耗時]
-    Paint --> Cat[CatRenderer 正弦波骨骼、掃描眼]
+    SM -->|update 觸發重繪| Paint["MainWindow::paint()"]
+    Paint --> Hud["HudRenderer (終端矩陣、極限耗時)"]
+    Paint --> Cat["CatRenderer (正弦波骨骼、掃描眼)"]
 
-    %% 樣式調整（讓它更有賽博龐克感）
     style Clock fill:#111,stroke:#00ffcc,stroke-width:2px;
     style Ollama fill:#221133,stroke:#ff007f,stroke-width:2px;
-    style Paint fill:#112211,stroke:#33cc33,stroke-width:2px;
+    style Paint fill:#112211,stroke:#33cc33,stroke-width:2px;  
+
 ## 🚀 執行環境與編譯指南
 
 ### 前提條件
