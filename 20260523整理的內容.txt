@@ -1,0 +1,528 @@
+「主要方法」的用途
+
+---
+
+# `main.cpp`
+
+## `main()`
+
+程式入口。
+
+功能：
+
+* 建立 Qt Application
+* 啟用 OpenGL/MSAA
+* 建立 `MainWindow`
+* 啟動事件循環
+
+核心流程：
+
+```text
+QApplication
+ → MainWindow
+ → show()
+ → app.exec()
+```
+
+---
+
+# `mainwindow.cpp`
+
+這是整個專案的核心控制器。
+
+負責：
+
+* UI
+* RSS
+* AI
+* 動畫
+* 畫面更新
+* 狀態同步
+
+---
+
+## `MainWindow::MainWindow()`
+
+主視窗建構子。
+
+初始化：
+
+* RSS 抓取器
+* OllamaClient
+* HUD renderer
+* Timer
+* 畫面更新循環
+
+並建立 signal/slot：
+
+```cpp
+connect(...)
+connect(fetcher,
+        &Fetcher::done,
+        ui,
+        &UI::update);
+管理 callback
+管理 thread
+管理生命週期
+queue event
+
+c++ 互動方式
+	1. 直接函式呼叫（最快）
+	2. function pointer（傳統 callback）
+	3. std::function + lambda（現代 C++ 常用）
+	4. Observer Pattern（自己實作 signal/slot）
+	5. Qt signal/slot
+
+```
+
+還有：
+
+* FPS 更新
+* 新聞輪播
+* 自動刷新
+
+這裡幾乎是「系統啟動中心」。
+
+---
+
+## `MainWindow::handleOllamaArrival()`
+
+AI 回覆抵達時執行。
+
+功能：
+
+* 取得 Ollama 回應
+* 更新 HUD 對話內容
+* 更新機械貓情緒
+* 觸發 repaint
+
+流程：
+
+```text
+Ollama 回覆
+ → 格式化
+ → 更新狀態
+ → UI刷新
+```
+
+---
+
+## `MainWindow::logMessage()`
+
+訊息記錄器。
+
+用途：
+
+* Debug
+* HUD console
+* 系統日誌
+
+通常會：
+
+```cpp
+append()
+```
+
+到文字區。
+
+---
+
+## `MainWindow::updateBackgroundCache()`
+
+背景快取更新。
+
+用途：
+
+* 預先繪製背景
+* 減少 repaint 成本
+* 提升 FPS
+
+這是一種：
+
+```text
+double buffering
+```
+
+概念。
+
+---
+
+## `MainWindow::resizeEvent()`
+
+視窗大小改變事件。
+
+功能：
+
+* 重建背景快取
+* 重算 HUD 位置
+* 更新動畫比例
+
+Qt 標準事件。
+
+---
+
+## `MainWindow::paintEvent()`
+
+主畫面渲染。
+
+核心 render pipeline：
+
+```text
+背景
+ → HUD
+ → 新聞
+ → 機械貓
+ → 對話框
+ → 特效
+```
+
+這是整個 UI 的主 renderer。
+
+---
+
+# `rss_fetcher.cpp`
+
+RSS 網路模組。
+
+---
+
+## `RssFetcher::RssFetcher()`
+
+建立：
+
+```cpp
+QNetworkAccessManager
+```
+
+並初始化 RSS 模組。
+
+---
+
+## `RssFetcher::fetch()`
+
+開始抓 RSS。
+
+通常：
+
+```cpp
+manager->get(...)
+```
+
+功能：
+
+* 發送 HTTP GET
+* 抓 RSS XML
+
+---
+
+## `RssFetcher::onReplyArrival()`
+
+RSS 回來後解析。
+
+功能：
+
+* 解析 XML
+* 擷取新聞標題
+* 發 signal 給 MainWindow
+
+流程：
+
+```text
+HTTP 回覆
+ → XML parse
+ → News list
+ → emit
+```
+
+---
+
+# `ollama_client.cpp`
+
+本地 AI API 客戶端。
+
+---
+
+## `OllamaClient::OllamaClient()`
+
+初始化：
+
+* QNetworkAccessManager
+* API endpoint
+* timeout 參數
+
+---
+
+## `OllamaClient::sendRequest()`
+
+最重要的方法之一。
+
+功能：
+
+* 組 JSON
+* 建立 prompt
+* 呼叫：
+
+```text
+/api/chat
+```
+
+傳送內容包含：
+
+* 新聞
+* 時間人格
+* 情緒設定
+* token 調度
+
+這是：
+
+```text
+Prompt Engineering 核心
+```
+
+---
+
+## `OllamaClient::onReplyArrival()`
+
+AI 回覆處理。
+
+功能：
+
+* 解析 JSON
+* 擷取 message
+* 過濾異常輸出
+* emit 給 MainWindow
+
+---
+
+## `OllamaClient::filterAndTransform()`
+
+輸出清洗器。
+
+功能：
+
+* 去除 prompt echo
+* 過濾 markdown/code
+* 修正 AI 廢話
+* 加入 cyberpunk 語氣
+
+這是品質提升核心。
+
+---
+
+# `mood_analyzer.cpp`
+
+情緒分析器。
+
+---
+
+## `MoodAnalyzer::analyze()`
+
+分析新聞情緒。
+
+根據關鍵字：
+
+* AI
+* 戰爭
+* 股市
+* 台積電
+
+判斷：
+
+```text
+happy
+angry
+chaotic
+dark
+```
+
+用途：
+
+* 改變貓咪表情
+* 改變 prompt
+* 改變 HUD 顏色
+
+---
+
+# `hud_renderer.cpp`
+
+HUD 畫面繪製器。
+
+---
+
+## `HudRenderer::drawHUD()`
+
+畫整個 HUD。
+
+包含：
+
+* 邊框
+* 掃描線
+* 雷達感
+* Cyber panel
+
+使用：
+
+```cpp
+QPainter
+```
+
+手工繪製。
+
+---
+
+## `HudRenderer::drawNewsStream()`
+
+新聞滾動區。
+
+功能：
+
+* 跑馬燈
+* 漸變透明
+* 文字流動
+
+有 cyber terminal 感。
+
+---
+
+## `HudRenderer::drawChatBubble()`
+
+AI 對話框。
+
+功能：
+
+* 氣泡 UI
+* 動態透明
+* 發光文字
+
+就是機械貓講話的區域。
+
+---
+
+# `cat_renderer.cpp`
+
+機械貓渲染器。
+
+---
+
+## `CatRenderer::drawCyberCat()`
+
+整個專案最有特色的方法。
+
+功能：
+
+* 畫貓
+* 畫眼睛
+* 畫耳朵
+* 畫發光線條
+* 畫情緒動畫
+
+依據 mood：
+
+```text
+normal
+angry
+crazy
+sleepy
+```
+
+切換：
+
+* 眼神
+* 顏色
+* 動畫頻率
+
+這其實有點像：
+
+```text
+Live2D-lite
+```
+
+的概念。
+
+---
+
+# `cyber_formatter.cpp`
+
+文字格式化模組。
+
+---
+
+## `CyberFormatter::cleanNoiseAndCode()`
+
+文字清洗器。
+
+用途：
+
+* 去除 markdown
+* 去除 code block
+* 過濾 AI 雜訊
+* 替換不符合世界觀詞語
+
+例如：
+
+```text
+ChatGPT
+↓
+深網智能核心
+```
+
+這是世界觀一致化處理。
+
+---
+
+# 整體架構關係
+
+整個專案其實是：
+
+```text
+RSS
+ ↓
+MoodAnalyzer
+ ↓
+OllamaClient
+ ↓
+CyberFormatter
+ ↓
+MainWindow
+ ↓
+HUDRenderer + CatRenderer
+```
+
+---
+
+# 真正的核心模組
+
+如果只看「價值最高」部分：
+
+## 1. `ollama_client.cpp`
+
+因為：
+
+* prompt engineering
+* 小模型補強
+* AI personality
+
+都在這。
+
+---
+
+## 2. `cat_renderer.cpp`
+
+因為：
+
+* UI 世界觀
+* 動畫風格
+* 視覺識別
+
+都靠它。
+
+---
+
+## 3. `mainwindow.cpp`
+
+因為：
+
+* 整個事件流
+* 所有模組協調
+
+都在這。
